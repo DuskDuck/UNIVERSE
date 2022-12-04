@@ -1,0 +1,116 @@
+@font-face {
+    font-family: 'Quicksand-Bold';
+    src: url(../font/quicksand/Quicksand-Bold.otf);
+}
+@font-face {
+    font-family: 'Quicksand-LightItalic';
+    src: url(../font/quicksand/Quicksand-LightItalic.otf);
+}
+@font-face {
+    font-family: 'Quicksand-RegularItalic';
+    src: url(../font/quicksand/Quicksand-Regular.otf);
+}
+@font-face {
+    font-family: '20DB';
+    src: url(../font/20-db/20db.otf);
+}
+form {
+    text-align: center;
+}
+body {
+    margin: 0;
+    padding: 0;
+}
+a {
+    color: rgb(0, 128, 135);
+}
+.wrapper {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),url("../images/background/desktop.jpg");
+    background-size: 100%;
+    width: 100%;
+    height: 100%;
+    min-width: 950px;
+}
+.login_box {
+    font-family: 'Quicksand-RegularItalic', sans-serif;
+    position: relative;
+    margin-right: auto;
+    margin-left: auto;
+    top: 7%;
+    width: 35%;
+    background-color: white;
+    border: 1px solid #c6c6c6;
+    border-radius: 10px;
+    padding: 5px;
+}
+.login_header {
+    font-family: 'Quicksand-RegularItalic', sans-serif;
+    width: 100%;
+    height: 90px;
+    color: white;
+    background-color: rgb(20, 20, 20);;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.login_header h2 {
+    font-family: '20DB',sans-serif;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: White;
+    font-size: 50px;
+    letter-spacing: 5px;
+}
+input[type="submit"]{
+    font-family: 'Quicksand-Bold', sans-serif;
+    background-color: rgb(20, 20, 20);
+    color: white;
+    border-radius: 3px;
+    padding: 10px 10px 10px 10px;
+    margin: 5px 0 10px 0;
+    width: 76.5%;
+    border: none;
+}
+input[type="submit"]:hover{
+    background-color: rgb(100, 100, 100);
+}
+input[type="text"],input[type="email"],input[type="password"]{
+    border: 1px solid rgb(157, 157, 157);   
+    width: 70%;
+    height: 35px;   
+    padding-left: 5px;
+}
+input[type="text"]:focus,input[type="email"]:focus,input[type="password"]:focus{
+    outline-color: rgb(0, 171, 180);
+}
+#first {
+    margin-top: 5%;
+}
+#second {
+    margin-top: 5%;
+    display: none;
+}
+.notification {
+    display: block;
+    text-align: left;
+    margin-left: 12%;
+    color: red;
+    font-size: 13px;
+}
+.InputAddOn {
+    display: flex;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    justify-content: center;
+}
+.InputAddOn-item {
+    display: flex;
+    background-color:rgb(213, 213, 213);
+    height: 35px;
+    width: 35px;
+    align-items: center;
+    justify-content: center;
+}
+.input-group-text{
+    color: #505050;
+}

@@ -1,0 +1,417 @@
+@font-face {
+    font-family: 'Quicksand-Bold';
+    src: url(../font/quicksand/Quicksand-Bold.otf);
+}
+@font-face {
+    font-family: 'Quicksand-RegularItalic';
+    src: url(../font/quicksand/Quicksand-Regular.otf);
+}
+@font-face {
+    font-family: '20DB';
+    src: url(../font/20-db/20db.otf);
+}
+body {
+    line-height: 17px;
+    background-color: rgb(241, 241, 241);
+}
+.top_bar {
+    width: 100%;
+    height: 40px;
+    background-color: rgb(11, 6, 46);
+    margin-bottom: 10px;
+    display: inline-flex;
+    align-content: center;
+    position: fixed;
+    z-index: 10;
+}
+.logo a{
+    font-family: '20DB',sans-serif;
+    font-size: 20px; 
+    margin-left: 20px;
+    position: relative;
+    top: 25%;
+    color: white;
+    text-decoration: none;
+}
+nav {
+    float: right;
+    right: 5px;
+    position: absolute;
+    margin:10px;
+}
+nav a{
+    position: relative;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    margin:10px 10px 0 0;
+}
+nav a:hover{
+    border-bottom: 7px;
+    color: rgb(200,200,200);
+}
+.wrapper {
+    margin: 0 auto;
+    top: 50px;
+    position: relative;
+    width: 15px;
+    min-width: 950px;
+}
+.column {
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 2px 2px 1px;
+    z-index: -1;
+    background-color: rgb(97, 97, 97);
+}
+.user_details {
+    position: fixed;
+    width: 250px;
+    float: left;
+    margin-bottom: 20px;
+}
+.user_details a:link{
+    text-decoration: none;
+}
+.user_details_left_right{
+    width: 125px;
+    display: inline-block;
+    position: absolute;
+    padding-left: 5px;
+}
+.main_column {
+    float: right;
+    width: 70%;
+    z-index: -1;
+    min-height: 60px;
+}
+.post_form {
+    width: 100%;
+}
+.post_form textarea{
+    width: 81%;
+    height: 30px;
+    border-radius: 5px;
+    margin-right: 5px;
+    margin-left: 15px;
+    border: 1px transparent;
+    font-size: 16px;
+    color: white;
+    background-color: transparent;
+    caret-color: rgb(255, 255, 255);
+    white-space:nowrap;
+    overflow:hidden;
+    resize: none;
+    padding: 5px;
+}
+textarea:focus{
+    outline: 0;
+}
+.post_form input[type="submit"]{
+    width: 12%;
+    height: 30px;
+    border: 10px;
+    border-radius: 5px;
+    color: white;
+    background-color: rgb(36, 36, 36);
+    font-family: 'Quicksand-Bold',sans-serif;
+    font-size: 90%;
+    position: absolute;
+    outline: 0;
+    margin-left: 25px;
+}
+.post_form input[type="submit"]:active{
+    background-color: white;
+    color: black;
+}
+
+.status_post {
+    font-family: 'Quicksand-RegularItalic',sans-serif;
+    width: 96%;
+    font-size: 15px;
+    padding: 10px 5px;
+    /* min-height: 60px; */
+}
+.status_post a {
+    font-family: 'Quicksand-Bold',sans-serif;
+    text-decoration: none;
+    color: white;
+}
+.post_profile_pic {
+    float: left;
+    margin-right: 10px;
+}
+.post_profile_pic img {
+    border-radius: 15px;
+}
+.post_body {
+    font-family: 'Quicksand-RegularItalic',sans-serif;
+    color: white;
+    word-wrap: break-word;
+    margin-left: 40px;
+    height: fit-content;
+}
+.noMorePostnotify {
+    font-family: 'Quicksand-Bold',sans-serif;
+    font-size: 18px;
+    color: white;
+}
+.loadingicon {
+    width: 30px;
+    margin-left: 48%;
+    margin-right: 48%;
+}
+
+/* test */
+.sidenav {
+    height: 100%; /* Full-height: remove this if you want "auto" height */
+    width: 60px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    background-color: #111; /* Black */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 7.5px;
+  }
+  
+  /* The navigation menu links */
+  .sidenav a {
+    margin-left: 7.5px;
+    margin-right: 7.5px;
+    text-decoration: none;
+    color: #818181;
+    display: block;
+  }
+  
+  /* When you mouse over the navigation links, change their color */
+  .sidenav a:hover {
+    color: #f1f1f1;
+  }
+  .channel_list {
+    position: fixed; 
+    top: 0px; 
+    left: 60px; 
+    width: 250px; 
+    height: 900px; 
+    background: #DEE1E6FF; 
+    border-radius: 0px; 
+  }
+  .group_icon i{
+    font-size: 50px;
+  }
+  .channel_name {
+    top: 0px; 
+    width: 100%;
+    height: 45px;
+    background: #1D2128FF;
+    border-radius: 0px; 
+  }
+  .channel_name p {
+    font-family: 'Quicksand-Bold',sans-serif;
+    position: relative;
+    top: 50%;
+    color: #DEE1E6FF;
+    margin-left: 15px;
+    margin-right: 15px;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+  }
+  .channel_ads {
+    width: 100%; 
+    height: 200px; 
+    background: #303336FF; 
+    border-radius: 0px; 
+    color: #DEE1E6FF;
+  }
+  .channel_ads p {
+    margin-top: 30px;
+    text-align: center;
+  }
+  .channel_ads img {
+    position: relative;
+    border-radius: 8px;
+    width: 80%;
+    top:10%;
+    left: 50%;
+    -ms-transform: translateX(-50%);
+    transform: translateX(-50%);
+  }
+  .channels {
+    font-family: 'Quicksand-Bold',sans-serif;
+    width: 100%; 
+    height: 435px; 
+    background: #303336FF;
+    border-radius: 0px;  
+    overflow: hidden; 
+    font-size: 12px;
+    color: #DEE1E6FF;
+  }
+  .channels i {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+  .channels button {
+    font-family: 'Quicksand-RegularItalic',sans-serif;
+    color: rgb(186, 189, 194);
+    padding: 8px 16px;
+    width: 95%;
+    background-color: #303336FF;
+    margin-left: 5px;
+    margin-bottom: 2px;
+    font-size: 16px;
+    text-decoration: none;
+    text-align: left;
+    border: 0px;
+    display: block;
+    border-radius: 6px;
+  }
+  .channels button:not(:last-child) {
+    border-bottom: none; /* Prevent double borders */
+  }
+  .channels button:hover {
+    background-color: rgb(70, 74, 78);
+  }
+  
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: rgb(62, 62, 62); 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgb(37, 37, 37); 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #9c9c9c;
+  }
+
+  .channels:hover {
+    overflow: auto;
+  }
+  .user_info {
+    height: 55px;
+    background: #252525;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    color: #818181;
+  }
+  .user_info a {
+    margin-left: 10px;
+    width: 35px;
+  }
+  .user_info img {
+    width: 35px;
+    border-radius: 4px;
+  }
+  .user_info_detail {
+    display: inline-block;
+  }
+  .user_info_detail a {
+    font-family: 'Quicksand-Bold',sans-serif;
+    color:#DEE1E6FF;
+    text-decoration: none;
+  }
+
+  /* Chat area */
+  .main_area {
+    width: 1226px;
+    height: 100%;
+    background: #474A4FFF; 
+    position: fixed;
+    left: 310px;
+  }
+  .main_area .nav {
+    background: #303336FF;
+    height: 45px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-between;
+  }
+  .nav .button {
+    margin-right: 20px;
+  }
+  .nav .button a {
+    color: #DEE1E6FF;
+    font-size: 20px;
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+  .nav .chat_welcome {
+    margin-left: 20px;
+    color: #DEE1E6FF;
+  }
+
+  .main_area .sub_level {
+    display: flex;
+  }
+
+  .post_area {
+    padding-left: 15px;
+    width: 960px;
+    height: 100%;
+  }
+  .posts_area {
+    overflow: auto;
+    height: 600px;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column-reverse;
+    flex-direction: column-reverse;
+  }
+  .user_list {
+    position: fixed;
+    right: 0;
+    background-color:#303336FF;
+    width: 266px;
+    height: 100%;
+  }
+  .message_area {
+    background-color:rgb(94, 98, 104); 
+    border-radius: 10px;
+    height: 60px;
+    width: 900px;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-left: 15px;
+    margin-bottom: 25px;
+    padding-top: 15px;
+  }
+
+  .user_list {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-family: 'Quicksand-Bold',sans-serif;
+    color: #DEE1E6FF;
+  }
+  .user_list img {
+    width: 40px;
+    border-radius: 20px;
+  }
+  .user_list p {
+    display: inline-block;
+  }
+  .user_list_item {
+    padding: 5px 5px;
+    border-radius: 8px;
+  }
+  .user_list_item:hover {
+    background: rgb(65, 69, 72);
+  }
+
+
+  
+  
