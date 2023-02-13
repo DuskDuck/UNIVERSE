@@ -1,5 +1,11 @@
 <?php
 //Delcaring varibles to prevent errors
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+require("vendor/autoload.php");
+
 $fname = ""; //first name
 $lname = ""; //last name
 $em = "";    //email 
@@ -97,58 +103,26 @@ if(isset($_POST['register_button'])){
         }
 
         //Profile picture assignment
-        $rand = rand(1,16);
-        switch($rand){
-            case 1:
-                $profile_pic = "asset/images/profile_pic/default/head_belize_hole.png";
-                break;
-            case 2:
-                $profile_pic = "asset/images/profile_pic/default/head_alizarin.png";
-                break;
-            case 3:
-                $profile_pic = "asset/images/profile_pic/default/head_carrot.png";
-                break;
-            case 4:
-                $profile_pic = "asset/images/profile_pic/default/head_amethyst.png";
-                break;  
-            case 5:
-                $profile_pic = "asset/images/profile_pic/default/head_deep_blue.png";
-                break;
-            case 6:
-                $profile_pic = "asset/images/profile_pic/default/head_emerald.png";
-                break;
-            case 7:
-                $profile_pic = "asset/images/profile_pic/default/head_green_sea.png";
-                break;
-            case 8:
-                $profile_pic = "asset/images/profile_pic/default/head_nephritis.png";
-                break; 
-            case 9:
-                $profile_pic = "asset/images/profile_pic/default/head_pete_river.png";
-                break;
-            case 10:
-                $profile_pic = "asset/images/profile_pic/default/head_pomegranate.png";
-                break;
-            case 11:
-                $profile_pic = "asset/images/profile_pic/default/head_pumpkin.png";
-                break;
-            case 12:
-                $profile_pic = "asset/images/profile_pic/default/head_red.png";
-                break; 
-            case 13:
-                $profile_pic = "asset/images/profile_pic/default/head_sun_flower.png";
-                break;
-            case 14:
-                $profile_pic = "asset/images/profile_pic/default/head_turqoise.png";
-                break;
-            case 15:
-                $profile_pic = "asset/images/profile_pic/default/head_wet_asphalt.png";
-                break;
-            case 16:
-                $profile_pic = "asset/images/profile_pic/default/head_wisteria.png";
-                break;       
-        }
-        $query = mysqli_query($con, "INSERT INTO users VALUES ('','$fname','$lname','$username','$em','$password','$date','$profile_pic','0','0','no',',')");
+        $profile_pic = "asset/images/profile_pic/default/DefaultUser.png";
+        
+        $query = mysqli_query($con, "INSERT INTO users VALUES ('','$fname','$lname','$username','$em','$password','$date','$profile_pic','0','0','no',',','1','1')");
+
+        // $mail = new PHPMailer(true);
+        // $mail->isSMTP();
+        // $mail->Host = 'smtpout.secureserver.net';
+        // $mail->SMTPAuth = true;
+        // $mail->Username = 'emailaddress@test.com';
+        // $mail->Password = 'password';
+        // $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        // $mail->Port = 80;
+        // $mail->setFrom('tutorial@weblesson.info','Weblesson');
+        // $mail->addAddress($_SESSION['reg_email']);
+        // $mail->isHTML(true);
+        // $mail->Subject = 'Registration Verification for UNIVERSE';
+        // $mail->Body = '<p>Hello Bozo<p>';
+        // $mail->send();
+
+
 
         array_push($error_array, "<span style='color:#00A181;'> You're all set! Go ahead and log in</span><br>");
 

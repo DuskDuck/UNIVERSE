@@ -9,7 +9,6 @@ class User {
         $user_details_query = mysqli_query($con, "SELECT * FROM users WHERE username='$user'");
         $this->user = mysqli_fetch_array($user_details_query);
     }
-
     //Return User's Full name
     public function getFirstAndLastName(){
         $username = $this->user['username'];
@@ -56,6 +55,32 @@ class User {
             return true;
         else
             return false;
+    }
+    //Check if online
+    public function isOnline(){
+        $username = $this->user['username'];
+        $query = mysqli_query($this->con, "SELECT online FROM users WHERE username='$username'");
+        $row = mysqli_fetch_array($query);
+        return $row['online'];
+    }
+    //Check if person have recieve friend request from user 
+    public function didRecieveRequest($user_to){
+        $user_from = $this->user['username'];
+        $check_request_query = mysqli_query($this->con,"SELECT * FROM friend_requests WHERE user_to='$user_to' AND user_from='$user_from'");
+        if(mysqli_num_rows($check_request_query) > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public function didSendRequest($user_from){
+        $user_to = $this->user['username'];
+        $check_request_query = mysqli_query($this->con,"SELECT * FROM friend_requests WHERE user_to='$user_to' AND user_from='$user_from'");
+        if(mysqli_num_rows($check_request_query) > 0){
+            return true;
+        }else{
+            return false;
+        }
     }
 }
 ?>

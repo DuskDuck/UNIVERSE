@@ -5,6 +5,7 @@ if(isset($_SESSION['username'])) {
     $userLoggedIn = $_SESSION['username'];
     $user_details_query = mysqli_query($con, "SELECT * FROM users WHERE username = '$userLoggedIn'");
     $user = mysqli_fetch_array($user_details_query);
+    // $_SESSION['current_channel'] = 'General Chat';
 }
 else {
     header("Location: register.php");
@@ -23,25 +24,32 @@ else {
 </head>
 <body>
     <div class="sidenav">
-        <a href="#" class="group_icon"><i class="fa-solid fa-square-virus"></i></a>
-        <a href="#" class="group_icon"><i class="fa-solid fa-square"></i></a>
-        <a href="#" class="group_icon"><i class="fa-solid fa-square"></i></a>
-        <a href="#" class="group_icon"><i class="fa-solid fa-square"></i></a>
-        <a href="#" class="group_icon"><i class="fa-solid fa-square"></i></a>
+        <a href="#" class="app_logo"><i class="fa-solid fa-square-virus"></i></a>
+        <?php
+                    if(array_key_exists('clicked_c',$_POST)){
+                        $_SESSION['current_group'] = key($_POST['clicked_c']);
+                        $c_group_id = $_SESSION['current_group'];
+                        $group_query = mysqli_query($con,"SELECT * FROM channel WHERE id=$c_group_id");
+                        $group_row = mysqli_fetch_array($group_query);
+                        $channel_array = explode(",",$group_row['text_channel']);
+                        $_SESSION['current_channel'] = $channel_array[0];
+                    }
+        ?>
+        <form action="index.php" method="POST">
+            <?php
+                        $groupId = $user['group_id'];
+                        $group_array = explode(",",$groupId);
+                        foreach($group_array as $group){
+                            $buffer_group = $_SESSION['current_group'] ?? '1';
+                            $each_group_query = mysqli_query($con,"SELECT * FROM channel WHERE id=$group");
+                            $group_row = mysqli_fetch_array($each_group_query);
+                            $img = $group_row['group_img'];
+                            if($group == $buffer_group){
+                                echo "<input type=\"image\" class=\"group_icon\" src=\"$img\" value=\"# $group\" name=\"clicked_c[$group]\"/>";
+                            }else{
+                                echo "<input type=\"image\" class=\"group_icon_nonactive\" src=\"$img\" value=\"# $group\" name=\"clicked_c[$group]\"/>";
+                            }
+                        }
+            ?>
+        </form>
     </div>
-    <!-- <div class="top_bar">
-        <div class="logo">
-            <a href="index.php">TALKY</a>
-        </div>
-        <nav>
-            <a href="index.php"><i class="fa-solid fa-house"></i></a>
-            <a href="#"><i class="fa-solid fa-thumbtack"></i></a>
-            <a href="#"><i class="fa-solid fa-bell"></i></a>
-            <a href="<?php echo $userLoggedIn; ?>"><?php echo $user['first_name']?></a>
-            <a href="#"><i class="fa-solid fa-inbox"></i></a>
-            <a href="#"><i class="fa-solid fa-circle-question"></i></a>
-            <a href="includes/handlers/logout.php"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
-        </nav>   
-    </div>
-
-<div class="wrapper"> -->

@@ -10,33 +10,62 @@ if(isset($_POST['post'])){
 }
 ?>
     <!--User detail panel-->
+    <!-- <div id="overlay" onclick="off()">
+    </div> -->
     <div class="channel_list">
-        <div class="channel_name"><p>HUST Web Group 3<i class="fa-solid fa-chevron-down"></i></p></div>
+        <div class="channel_name"><p>
+            <!-- Get Channel Name -->
+            <?php
+            $current_user_group_array = explode(",",$user['group_id']);
+            $first_user_group = reset($current_user_group_array);
+            $channel_id = $_SESSION['current_group'] ?? $first_user_group;
+            $channel_query = mysqli_query($con,"SELECT * FROM channel WHERE id='$channel_id'");
+            $channel = mysqli_fetch_array($channel_query); 
+            echo $channel["name"];
+            ?>
+            <i class="fa-solid fa-chevron-down"></i></p></div>
         <div class="channel_ads">
             <img src="asset/images/ads/blackhole.jpg">
             <p>Expand your universe now with UNI Expansion Version</p>
         </div>  
+                <?php
+                    if(array_key_exists('clicked',$_POST)){
+                        $_SESSION['current_channel'] = key($_POST['clicked']);
+                    }
+                ?>
         <div class="channels">
             <div class="text_channels"><i class="fa-solid fa-chevron-down"></i>TEXT CHANNELS
-                <button><i class="fa-solid fa-hashtag"></i>General-chat</button>
-                <button><i class="fa-solid fa-hashtag"></i>Pre-meeting-chat</button>
-                <button><i class="fa-solid fa-hashtag"></i>Front-end-chat</button>
-                <button><i class="fa-solid fa-hashtag"></i>Back-end-chat</button>
-                <button><i class="fa-solid fa-hashtag"></i>UI/UX-team</button>
-                <button><i class="fa-solid fa-hashtag"></i>Public-file</button>
-                <button><i class="fa-solid fa-hashtag"></i>Management-Detail</button>
-                <button><i class="fa-solid fa-hashtag"></i>Chill-zone</button>
+                <form action="index.php" method="POST">
+                    <?php
+                        $channelname = $channel['text_channel'];
+                        $channel_array = explode(",",$channelname);
+                        foreach($channel_array as $value){
+                            $buffer_channel = $_SESSION['current_channel'] ?? 'General Chat';
+                            if($value == $buffer_channel){
+                                echo "<input type=\"submit\" value=\"# $value\" name=\"clicked[$value]\" style='background-color:rgb(90, 95, 99);
+                                                                                                                color: rgb(217, 222, 228);
+                                                                                                                ''/>";
+                            }else{
+                                echo "<input type=\"submit\" value=\"# $value\" name=\"clicked[$value]\" style=' 
+                                                                                                                {background-color:#303336FF;}
+                                                                                                                :hover{
+                                                                                                                    background-color: rgb(70, 74, 78);
+                                                                                                                }
+                                                                                                                ''/>";
+                            }
+                        }
+                    ?>
+                </form>
             </div>
             <br>
             <div class="voice_channels"><i class="fa-solid fa-chevron-down"></i>VOICE CHANNELS
-                <button><i class="fa-solid fa-headphones"></i>General-Voice-chat</button>
-                <button><i class="fa-solid fa-headphones"></i>Meeting</button>
-                <button><i class="fa-solid fa-headphones"></i>Front-end-meeting</button>
-                <button><i class="fa-solid fa-headphones"></i>Back-end-meeting</button>
-                <button><i class="fa-solid fa-headphones"></i>World-Cup-Live</button>
-                <button><i class="fa-solid fa-headphones"></i>ITSS-Project</button>
-                <button><i class="fa-solid fa-headphones"></i>Gaming-Room-#1</button>
-                <button><i class="fa-solid fa-headphones"></i>Gaming-Room-#2</button>
+                <?php
+                    $channelname = $channel['voice_channel'];
+                    $channel_array = explode(",",$channelname);
+                    foreach($channel_array as $value){
+                    echo "<button><i class='fa-solid fa-hashtag'></i>$value</button>";
+                    }
+                ?>
             </div>
         </div> 
         <div class="user_info">
@@ -44,7 +73,7 @@ if(isset($_POST['post'])){
             <div class="user_info_detail">
                 <a href="<?php echo $userLoggedIn; ?>">
                 <?php
-                    echo $user['first_name'] . " " . $user['last_name'];
+                    echo $user['first_name'] . " " . $user['last_name'];  
                 ?>
                 </a>
                 #4042
@@ -54,7 +83,14 @@ if(isset($_POST['post'])){
     <div class="main_area">
         <div class="nav">
             <div class="chat_welcome">
-                <i class="fa-solid fa-hashtag"></i> General-chat
+                <i class="fa-solid fa-hashtag"></i> 
+                <?php 
+                    if(array_key_exists('current_channel',$_SESSION)){
+                        echo $_SESSION['current_channel'];
+                    }else{
+                        echo 'General Chat';
+                    }
+                ?>
             </div>
             <div class="button">
                 <a href="index.php"><i class="fa-solid fa-house"></i></a>
@@ -79,37 +115,41 @@ if(isset($_POST['post'])){
             </div>
             <div class="user_list">
                 <div class="online">
-                    Online
+                    ONLINE
                     <?php
                     $userlist_query = "SELECT * FROM users";
                     if($result = mysqli_query($con,$userlist_query)){
                         while($row = $result->fetch_assoc()){
                             if($row['online']){
-                                $name = $row["first_name"] . " " . $row["last_name"];
-                                $profile_pic = $row["profile_pic"];
-                                echo    "<div class='user_list_item'>
-                                            <img src='$profile_pic'></img>
-                                            <p>$name</p>
-                                        </div>";
+                                if($row['group_id'] == $channel_id){
+                                    $name = $row["first_name"] . " " . $row["last_name"];
+                                    $profile_pic = $row["profile_pic"];
+                                    echo    "<div class='user_list_item'>
+                                                <img src='$profile_pic'></img>
+                                                <p>$name</p>
+                                            </div>";
+                                }
                             }
                         }
                     }
                     ?>
                 </div>
                 <div class="offline">
-                    Offline
+                    OFFLINE
                     <?php
                     $userlist_query = "SELECT * FROM users";
                     if($result = mysqli_query($con,$userlist_query)){
                         while($row = $result->fetch_assoc()){
                             if($row['online']){
                             }else{
-                                $name = $row["first_name"] . " " . $row["last_name"];
-                                $profile_pic = $row["profile_pic"];
-                                echo    "<div class='user_list_item' style='opacity: 0.5;'>
-                                            <img src='$profile_pic'></img>
-                                            <p>$name</p>
-                                        </div>";
+                                if($row['group_id'] == $channel_id){
+                                    $name = $row["first_name"] . " " . $row["last_name"];
+                                    $profile_pic = $row["profile_pic"];
+                                    echo    "<div class='user_list_item'>
+                                                <img src='$profile_pic'></img>
+                                                <p>$name</p>
+                                            </div>";
+                                }
                             }
                         }
                     }
@@ -118,13 +158,22 @@ if(isset($_POST['post'])){
             </div>
         </div>
     </div>
-    <script>
+    <script> 
+        const container = document.querySelector('.posts_area');
+        function on() {
+        document.getElementById("overlay").style.display = "block";
+        }
+
+        function off() {
+        document.getElementById("overlay").style.display = "none";
+        }       
                 //Function to load 10 message each time (Calculate if messages are on screen or not...).
                 $(function(){
                 
                     var userLoggedIn = '<?php echo $userLoggedIn; ?>';
                     var inProgress = false;
-                
+                    
+
                     loadPosts(); //Load first posts
                 
                     $(".posts_area").scroll(function() {
@@ -134,15 +183,28 @@ if(isset($_POST['post'])){
                         // isElementInViewport uses getBoundingClientRect(), which requires the HTML DOM object, not the jQuery object. The jQuery equivalent is using [0] as shown below.
                         if (isElementInView(bottomElement[0]) && noMorePosts == 'false') {
                             loadPosts();
-                            // console.log("loading");
+                            //console.log("loading");
                         }
                     });
+                    $(".channels input" ).click(function() {
+                        
+                    });
+                    function removeAllChildNodes(parent) {
+                        while (parent.firstChild) {
+                            parent.removeChild(parent.firstChild);
+                        }
+                    }
+                    function reloadPosts(){
+                        removeAllChildNodes(container);
+                        loadPosts();
+                    }
                 
                     function loadPosts() {
-                        if(inProgress) { //If it is already in the process of loading some posts, just return
+                        if(inProgress) { 
+                            //If it is already in the process of loading some posts, just return
                             return;
                         }
-                        
+
                         inProgress = true;
                         $('#loading').show();
                 
@@ -181,14 +243,39 @@ if(isset($_POST['post'])){
                         // console.log($(".posts_area").height);
                 
                         return (
-                             rect.top >= 96 &&
+                             rect.top >= 44 &&
                         //     rect.left >= 325 &&
-                             rect.bottom >= 180  //* or $(window).height()
+                             rect.bottom >= 135 //* or $(window).height()
                         //     rect.right <= ($(".posts_area").innerWidth || $(".posts_area").width) //* or $(window).width()
                         );
                     }
                 });
-        
+
+                // $(document).ready(function(){
+                //     var conn = new WebSocket('ws://localhost:8080');
+                //     conn.onopen = function(e){
+                //         console.log("Connection established!");
+                //     };
+                //     conn.onmessage = function(e){
+                //         console.log(e.data);
+
+                //         var data = JSON.parse(e.data);
+                //         reloadPosts();
+                        
+                //     }
+                //     $('.message_area').on('submit',function(event){
+                //         event.preventDefault(); //prevent web refresh
+                //         var userLoggedIn = '<?php echo $userLoggedIn; ?>';
+                //         var message = $('#post_text').val();
+
+                //         var data = {
+                //             username : userLoggedIn,
+                //             msg : message
+                //         };
+
+                //         conn.send(JSON.stringify(data));
+                //     });
+                // });
     </script>
 </body>
 </html>
