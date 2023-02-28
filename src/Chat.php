@@ -1,9 +1,18 @@
 <?php
 namespace MyApp;
+
+use Post;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
+use User;
+session_start();
+$timezone = date_default_timezone_set("Asia/Ho_Chi_Minh");
+require dirname(__DIR__) . "/includes/classes/User.php"; 
+require dirname(__DIR__) . "/includes/classes/Post.php";
+//require dirname(__DIR__) . "database/ChatUser.php";
 
 class Chat implements MessageComponentInterface {
+    
     protected $clients;
 
     public function __construct() {
@@ -19,14 +28,36 @@ class Chat implements MessageComponentInterface {
 
     public function onMessage(ConnectionInterface $from, $msg) {
         $numRecv = count($this->clients) - 1;
-        echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
-            , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
+        // echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
+        //     , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
+
+            $data = json_decode($msg, true);
+            $user_name = $data['username'];
+            //echo sprintf('Sender: %s'. "\n",$user_name);
+            $tmpcon = mysqli_connect("localhost","root","","social");
+          
+            $user_obj = new User($tmpcon, $user_name);
+            $post_obj = new Post($tmpcon,$user_name);
+            
+            $post_obj->savePost($data['msg'],$data['channel'],$data['group']);
+
+            $data['dt'] = date("d/m/Y h:i:s");
+            $data['fullname'] = $user_obj->getFirstAndLastName();
+            $tmpcon->close();//close right away for potential threat
+
 
         foreach ($this->clients as $client) {
-            if ($from !== $client) {
-                // The sender is not the receiver, send to each client connected
-                $client->send($msg);
+            // if ($from !== $client) {
+            //     // The sender is not the receiver, send to each client connected
+            //     $client->send($msg);
+            // }
+            if($from == $client){
+                $data['from'] = 'Me';
+            }else{
+                $data['from'] = $user_name;
             }
+            $client->send(json_encode($data));
+            echo sprintf("%s" . "\n", json_encode($data));
         }
     }
 

@@ -88,6 +88,7 @@ if(isset($_POST['post'])){
                     if(array_key_exists('current_channel',$_SESSION)){
                         echo $_SESSION['current_channel'];
                     }else{
+                        $_SESSION['current_channel'] = 'General Chat';
                         echo 'General Chat';
                     }
                 ?>
@@ -251,31 +252,49 @@ if(isset($_POST['post'])){
                     }
                 });
 
-                // $(document).ready(function(){
-                //     var conn = new WebSocket('ws://localhost:8080');
-                //     conn.onopen = function(e){
-                //         console.log("Connection established!");
-                //     };
-                //     conn.onmessage = function(e){
-                //         console.log(e.data);
+                $(document).ready(function(){
+                    var conn = new WebSocket('ws://localhost:8080');
+                    conn.onopen = function(e){
+                        console.log("Connection established!");
+                    };
+                    conn.onmessage = function(e){
+                        console.log(e.data);
 
-                //         var data = JSON.parse(e.data);
-                //         reloadPosts();
+                        var data = JSON.parse(e.data);
+
+                        if(data.from == 'Me'){
+                            var html_data = "<div class='status_post'><div class='post_profile_pic'><img src='$profile_pic' width='30'><div class='online-indicator'><span class='blink'></span></div></div><div class='posted_by' style='color:#ACACAC;'><a href='"+data.username+"' onclick='on()'> "+data.fullname+" </a>&nbsp;&nbsp;&nbsp;&nbsp;"+data.dt+"</div><div class='post_body'>"+data.msg+"<br></div><div class='newsfeedPostOptions'><iframe src='like.php?post_id=$id' scrolling='no'></iframe></div></div>";
+                        }else{
+                            var c_group = '<?php echo $channel_id; ?>';
+                            var c_channel = '<?php echo $_SESSION['current_channel']; ?>'; 
+                            if(data.group == c_group){
+                                if(data.channel == c_channel){
+                                    var html_data = "<div class='status_post'><div class='post_profile_pic'><img src='$profile_pic' width='30'><div class='online-indicator'><span class='blink'></span></div></div><div class='posted_by' style='color:#ACACAC;'><a href='"+data.username+"' onclick='on()'> "+data.fullname+" </a>&nbsp;&nbsp;&nbsp;&nbsp;"+data.dt+"</div><div class='post_body'>"+data.msg+"<br></div><div class='newsfeedPostOptions'><iframe src='like.php?post_id=$id' scrolling='no'></iframe></div></div>";
+                                }
+                            }
+                        }
+
+                        //$(".posts_area").append(html_data);
+                        $(".posts_area").prepend(html_data);
                         
-                //     }
-                //     $('.message_area').on('submit',function(event){
-                //         event.preventDefault(); //prevent web refresh
-                //         var userLoggedIn = '<?php echo $userLoggedIn; ?>';
-                //         var message = $('#post_text').val();
+                    }
+                    $('.message_area').on('submit',function(event){
+                        event.preventDefault(); //prevent web refresh
+                        var userLoggedIn = '<?php echo $userLoggedIn; ?>';
+                        var message = $('#post_text').val();
+                        var channel = '<?php echo $_SESSION['current_channel']; ?>';
+                        var group = '<?php echo $channel_id; ?>';
 
-                //         var data = {
-                //             username : userLoggedIn,
-                //             msg : message
-                //         };
+                        var data = {
+                            username : userLoggedIn,
+                            msg : message,
+                            channel : channel,
+                            group : group
+                        };
 
-                //         conn.send(JSON.stringify(data));
-                //     });
-                // });
+                        conn.send(JSON.stringify(data));
+                    });
+                });
     </script>
 </body>
 </html>

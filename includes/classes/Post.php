@@ -8,6 +8,37 @@ class Post {
         $this->con = $con;
         $this->user_obj = new User($con, $user);
     }
+    public function savePost($body, $from_channel, $c_group){
+        $body = strip_tags($body);
+
+        //escape single quote from input text to not mess up the SQL query
+        $body = mysqli_real_escape_string($this->con, $body);
+        //remove all spaces incase of post full of spaces still count
+        
+        $body = str_replace('\r\n', "\n" ,$body);
+        $body = nl2br($body);
+        
+        $check_empty = preg_replace('/\s+/',"",$body); 
+
+        if($check_empty != ""){
+
+            //Current date and time
+            $date_added = date("Y/m/d H:i:s");
+            //Get username
+            $added_by = $this->user_obj->getUsername();
+            //echo "<script>$from_channel</script>";
+            $user_to = "none";
+
+            $query = mysqli_query($this->con,"INSERT INTO posts VALUES('','$body','$added_by','$user_to','$date_added','no','no','0','$from_channel','$c_group')");
+            $returned_id = mysqli_insert_id($this->con);//unused for now
+
+            //insert notification
+            //update post count for user
+            $num_posts = $this->user_obj->getNumPosts();
+            $num_posts++;
+            $update_query = mysqli_query($this->con,"UPDATE users SET num_posts='$num_posts' WHERE username='$added_by' ");
+        }
+    }
 
     public function submitPost($body, $user_to){
         $body = strip_tags($body);
@@ -20,12 +51,11 @@ class Post {
         $body = nl2br($body);
         
         $check_empty = preg_replace('/\s+/',"",$body); 
-        $userLoggedIn= $this->user_obj->getUsername();
 
         if($check_empty != ""){
 
             //Current date and time
-            $date_added = date("Y-m-d H:i:s");
+            $date_added = date("Y/m/d H:i:s");
             //Get username
             $added_by = $this->user_obj->getUsername();
             if(array_key_exists('current_channel',$_SESSION)){
@@ -33,10 +63,8 @@ class Post {
             }else{
                 $from_channel = 'General Chat';
             }
-            echo "<script>$from_channel</script>";
-            if($user_to == $added_by){
-                $user_to = "none";
-            }
+            //echo "<script>$from_channel</script>";
+            $user_to = "none";
             $current_user_group_array = explode(",",$this->user_obj->getGroupId());
             $first_user_group = $current_user_group_array[0];
             $c_group = $_SESSION['current_group'] ?? $first_user_group;
@@ -203,7 +231,7 @@ class Post {
                                     </div>
 
                                     <div class='posted_by' style='color:#ACACAC;'>
-                                        <a href='$added_by' onclick='on()'> $first_name $last_name </a> $user_to &nbsp;&nbsp;&nbsp;&nbsp;$time_message
+                                        <a href='$added_by' onclick='on()'> $first_name $last_name </a> $user_to &nbsp;&nbsp;&nbsp;&nbsp;$date_time
                                     </div>
                                     <div class='post_body'>
                                         $body<br>
@@ -219,7 +247,7 @@ class Post {
                                         <img src='$profile_pic' width='30'>
                                     </div>
                                     <div class='posted_by' style='color:#ACACAC;'>
-                                        <a href='$added_by'  onclick='on()'> $first_name $last_name </a> $user_to &nbsp;&nbsp;&nbsp;&nbsp;$time_message
+                                        <a href='$added_by'  onclick='on()'> $first_name $last_name </a> $user_to &nbsp;&nbsp;&nbsp;&nbsp;$date_time
                                     </div>
                                     <div class='post_body'>
                                         $body<br>
@@ -244,8 +272,7 @@ class Post {
             else{
                 $str .= "<input type='hidden' class='noMorePosts' value='true'>
                             <p class='noMorePostsubnotify' style='text-align: center;'> This is the start of this server. </p>
-                            <p class='noMorePostnotify' style='text-align: center;'> Welcome to the Planet! </p>                        
-                            "; 
+                            <p class='noMorePostnotify' style='text-align: center;'> Welcome to the Planet! </p>"; 
             }
         }
         echo $str;
