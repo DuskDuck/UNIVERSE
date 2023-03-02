@@ -165,10 +165,10 @@ class Post {
                         $end_date = new DateTime($date_time_now);
                         $interval = $start_date->diff($end_date);
                         if($interval->y >= 1){
-                            if($interval == 1)
-                                $time_message = $interval->y . " year ago";
-                            else
-                                $time_message = $interval->y . " years ago";
+                            // if($interval == 1)
+                            //     $time_message = $interval->y . " year ago";
+                            // else
+                            //     $time_message = $interval->y . " years ago";
                         }
                         else if ($interval-> m >= 1) {
                             if($interval->d == 0){

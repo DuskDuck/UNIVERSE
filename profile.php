@@ -12,7 +12,7 @@ if(isset($_GET['profile_username'])){
 }
 ?>
 <!--User detail panel-->
-    <div id="overlay" onclick="off()">
+    <div id="overlay">
         <div class="wrapper">
             <div class = "profile_left">
                 <div id="pbg" class = "profile_background"></div>
@@ -23,12 +23,14 @@ if(isset($_GET['profile_username'])){
                 <div class='online-indicator'>
                     <span class='blink'></span>
                 </div>
+                
                     <div class="profile_info">
                         <p><?php echo "Posts: " . $user_array['num_posts']; ?></p>
                         <p><?php echo "Likes: " . $user_array['num_likes']; ?></p>
                         <p><?php echo "Friends: " . $num_friends; ?></p>
                     </div>
-                    <div class="x_button">
+
+                    <div class="esc_button">
                         <a href="index.php"><i class="fa-solid fa-circle-xmark"></i></a>
                     </div>
 
@@ -61,6 +63,8 @@ if(isset($_GET['profile_username'])){
             </div>
         </div>
     </div>
+
+    <!-- Background -->
     <div class="channel_list">
         <div class="channel_name"><p>
             <!-- Get Channel Name -->

@@ -1,5 +1,6 @@
 <?php
 require 'config/config.php';
+// require 'form_handlers/add_channel_handler.php';
 
 if(isset($_SESSION['username'])) {
     $userLoggedIn = $_SESSION['username'];
@@ -50,6 +51,22 @@ else {
                                 echo "<input type=\"image\" class=\"group_icon_nonactive\" src=\"$img\" value=\"# $group\" name=\"clicked_c[$group]\"/>";
                             }
                         }
+
             ?>
+            <a href="#" class="group_icon_nonactive" onclick="toggleDiv('overlay_add_channel')"><i class="fa-solid fa-square-plus"></i></a>
         </form>
     </div>
+    <script>
+		function toggleDiv($Id) {
+			var div = document.getElementById($Id);
+			if (div.style.display != "block") { 
+				div.style.display = "block";
+			} else {
+				div.style.display = "none";
+			}
+		}
+        function toggleDivJoin() {
+            toggleDiv('overlay_join_channel');
+            toggleDiv('overlay_add_channel');
+        }
+	</script>

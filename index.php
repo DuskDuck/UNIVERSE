@@ -2,6 +2,9 @@
 include("includes/header.php");
 include("includes/classes/User.php");
 include("includes/classes/Post.php");
+require("includes/form_handlers/add_channel_handler.php");
+require("includes/form_handlers/add_group_handler.php");
+require("includes/form_handlers/join_channel_handler.php");
 
 if(isset($_POST['post'])){
     $post= new Post($con, $userLoggedIn);
@@ -9,9 +12,123 @@ if(isset($_POST['post'])){
     header("Location: index.php");
 }
 ?>
-    <!--User detail panel-->
-    <!-- <div id="overlay" onclick="off()">
-    </div> -->
+    <div id="overlay_join_channel">
+        <div class="wrapper_add_channel">
+            <h1 style="text-align: center;">Join a Planet</h1>
+            <p style="text-align: center;">Enter an invite code below to join an existing planet</p>
+            <form action = "index.php" method="POST" enctype="multipart/form-data">
+                <br><br>
+                <label class = "server_name_text" for="server-name">INVITE CODE</label>
+                <input type="text" id="server-name" name="invite_code" required>
+                <br><br>
+                <input class="button" type="submit" name="join_button" value="Join Planet">
+            </form>
+            
+            <div class="esc_button">
+                <a href="#" onclick="toggleDiv('overlay_join_channel')"><i class="fa-solid fa-circle-xmark"></i></a>
+            </div>
+        </div>
+    </div>
+    <!-- Add Channel's Group Widget -->
+    <div id="overlay_add_channel">
+        <div class="wrapper_add_channel">
+            <h1 style="text-align: center;">Create a Planet</h1>
+            <p style="text-align: center;">A planet is where you and your friend hang out. Make yours and start talking.</p>
+            <form action = "index.php" method="POST" enctype="multipart/form-data">
+                <label class = "upfile" for="server-image"><i class="fa-solid fa-circle-plus"></i></label>
+
+                <div class="container">
+                    <img id="blah" src="https://placehold.it/100" alt="your image"/>
+                </div>
+
+                <input type="file" id="server-image" name="img" accept="image/*" onchange="readURL(this);" hidden>
+                <br><br>
+                <label class = "server_name_text" for="server-name">PLANET NAME</label>
+                <input type="text" id="server-name" name="server-name" required>
+                <br><br>
+                <input class="button" type="submit" name="create_button" value="Create">
+            </form>
+            <h2 style="text-align: center;">Have an invite already?</h2>
+            <button id="join" type="submit" onclick="toggleDivJoin()">Join a Planet</button>
+            
+            <div class="esc_button">
+                <a href="#" onclick="toggleDiv('overlay_add_channel')"><i class="fa-solid fa-circle-xmark"></i></a>
+            </div>
+        </div>
+    </div>
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#blah')
+                        .attr('src', e.target.result);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+
+    <!-- Add Text Channel Widget -->
+    <div id="overlay_add_text_channel">
+        <div class="wrapper_add_text_channel">
+            <form action="index.php" method="post">
+                <h1>Create Channel</h1>
+                <h2>CHANNEL TYPE</h2>
+                <div class = "checkbox_class">
+                    <label>
+                        <div class = "checkbox_card">
+                            <i class='fa-solid fa-hashtag'></i>
+                            Text
+                            <input type="radio" name="channel_type" value="text"> 
+                        </div>
+                    </label>
+                    <label>
+                        <div class = "checkbox_card">
+                            <i class="fa-solid fa-headphones"></i>
+                            Voice
+                            <input type="radio" name="channel_type" value="voice">
+                        </div>
+                    </label>
+                </div>
+                
+                <br>
+
+                <label class = "server_name_text" for="server-name">SERVER NAME</label>
+                <input type="text" id="channel-name" name="channel_name" required>
+                <br><br>
+                <input class="button" type="submit" name="create_channel_button" value="Create Channel">
+            </form>
+            
+            
+            <div class="esc_button">
+                <a href="#" onclick="toggleDiv('overlay_add_text_channel')"><i class="fa-solid fa-xmark"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear other checkbox, except current choice -->
+    <!-- <script>
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        selectOneCheckbox(checkboxes);
+        function selectOneCheckbox(checkboxes) {
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].addEventListener('change', function() {
+                    if (this.checked) {
+                        for (var j = 0; j < checkboxes.length; j++) {
+                            if (checkboxes[j] != this) {
+                                checkboxes[j].checked = false;
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    </script> -->
+
+
     <div class="channel_list">
         <div class="channel_name"><p>
             <!-- Get Channel Name -->
@@ -19,6 +136,7 @@ if(isset($_POST['post'])){
             $current_user_group_array = explode(",",$user['group_id']);
             $first_user_group = reset($current_user_group_array);
             $channel_id = $_SESSION['current_group'] ?? $first_user_group;
+            $_SESSION['current_group'] = $channel_id;
             $channel_query = mysqli_query($con,"SELECT * FROM channel WHERE id='$channel_id'");
             $channel = mysqli_fetch_array($channel_query); 
             echo $channel["name"];
@@ -28,14 +146,19 @@ if(isset($_POST['post'])){
             <img src="asset/images/ads/blackhole.jpg">
             <p>Expand your universe now with UNI Expansion Version</p>
         </div>  
-                <?php
-                    if(array_key_exists('clicked',$_POST)){
-                        $_SESSION['current_channel'] = key($_POST['clicked']);
-                    }
-                ?>
+            <?php
+                if(array_key_exists('clicked',$_POST)){
+                    $_SESSION['current_channel'] = key($_POST['clicked']);
+                }
+            ?>
         <div class="channels">
             <div class="text_channels"><i class="fa-solid fa-chevron-down"></i>TEXT CHANNELS
-                <form action="index.php" method="POST">
+            <?php
+                if($user['username'] == $channel['admin']){
+                    echo "<a href='#' onclick=\"toggleDiv('overlay_add_text_channel')\"><i class='fa-solid fa-plus'></i></a>";
+                }
+            ?>
+            <form action="index.php" method="POST">
                     <?php
                         $channelname = $channel['text_channel'];
                         $channel_array = explode(",",$channelname);
@@ -59,6 +182,11 @@ if(isset($_POST['post'])){
             </div>
             <br>
             <div class="voice_channels"><i class="fa-solid fa-chevron-down"></i>VOICE CHANNELS
+            <?php
+                if($user['username'] == $channel['admin']){
+                    echo "<a href='#' onclick=\"toggleDiv('overlay_add_text_channel')\"><i class='fa-solid fa-plus'></i></a>";
+                }
+            ?>
                 <?php
                     $channelname = $channel['voice_channel'];
                     $channel_array = explode(",",$channelname);
@@ -121,14 +249,23 @@ if(isset($_POST['post'])){
                     $userlist_query = "SELECT * FROM users";
                     if($result = mysqli_query($con,$userlist_query)){
                         while($row = $result->fetch_assoc()){
+                            $user_group_array = explode(",",$row['group_id']);
                             if($row['online']){
-                                if($row['group_id'] == $channel_id){
+                                if(in_array($channel_id,$user_group_array)){
                                     $name = $row["first_name"] . " " . $row["last_name"];
                                     $profile_pic = $row["profile_pic"];
-                                    echo    "<div class='user_list_item'>
-                                                <img src='$profile_pic'></img>
-                                                <p>$name</p>
-                                            </div>";
+                                    if($row['username'] == $channel['admin']){
+                                        echo    "<div class='user_list_item'>
+                                                    <img src='$profile_pic'></img>
+                                                    <p>$name</p>
+                                                    <i style = 'color: #fee75c;' class='fa-solid fa-crown'></i>
+                                                </div>";
+                                    }else{
+                                        echo    "<div class='user_list_item'>
+                                                    <img src='$profile_pic'></img>
+                                                    <p>$name</p>
+                                                </div>";
+                                    }
                                 }
                             }
                         }
@@ -141,15 +278,24 @@ if(isset($_POST['post'])){
                     $userlist_query = "SELECT * FROM users";
                     if($result = mysqli_query($con,$userlist_query)){
                         while($row = $result->fetch_assoc()){
+                            $user_group_array = explode(",",$row['group_id']);
                             if($row['online']){
                             }else{
-                                if($row['group_id'] == $channel_id){
+                                if(in_array($channel_id,$user_group_array)){
                                     $name = $row["first_name"] . " " . $row["last_name"];
                                     $profile_pic = $row["profile_pic"];
-                                    echo    "<div class='user_list_item'>
-                                                <img src='$profile_pic'></img>
-                                                <p>$name</p>
-                                            </div>";
+                                    if($row['username'] == $channel['admin']){
+                                        echo    "<div class='user_list_item'>
+                                                    <img src='$profile_pic'></img>
+                                                    <p>$name</p>
+                                                    <i style = 'color: #fee75c;' class='fa-solid fa-crown'></i>
+                                                </div>";
+                                    }else{
+                                        echo    "<div class='user_list_item'>
+                                                    <img src='$profile_pic'></img>
+                                                    <p>$name</p>
+                                                </div>";
+                                    }
                                 }
                             }
                         }
@@ -256,6 +402,10 @@ if(isset($_POST['post'])){
                     var conn = new WebSocket('ws://localhost:8080');
                     conn.onopen = function(e){
                         console.log("Connection established!");
+                        // var bridge = new WebSocket("ws://localhost:8080/chat.php?name=<?php echo $userLoggedIn; ?>")
+                    };
+                    conn.onclose = function(e){
+
                     };
                     conn.onmessage = function(e){
                         console.log(e.data);
@@ -263,17 +413,16 @@ if(isset($_POST['post'])){
                         var data = JSON.parse(e.data);
 
                         if(data.from == 'Me'){
-                            var html_data = "<div class='status_post'><div class='post_profile_pic'><img src='$profile_pic' width='30'><div class='online-indicator'><span class='blink'></span></div></div><div class='posted_by' style='color:#ACACAC;'><a href='"+data.username+"' onclick='on()'> "+data.fullname+" </a>&nbsp;&nbsp;&nbsp;&nbsp;"+data.dt+"</div><div class='post_body'>"+data.msg+"<br></div><div class='newsfeedPostOptions'><iframe src='like.php?post_id=$id' scrolling='no'></iframe></div></div>";
+                            var html_data = "<div class='status_post'><div class='post_profile_pic'><img src='"+data.profile_pic+"' width='30'><div class='online-indicator'><span class='blink'></span></div></div><div class='posted_by' style='color:#ACACAC;'><a href='"+data.username+"' onclick='on()'> "+data.fullname+" </a>&nbsp;&nbsp;&nbsp;&nbsp;"+data.dt+"</div><div class='post_body'>"+data.msg+"<br></div><div class='newsfeedPostOptions'><iframe src='like.php?post_id=$id' scrolling='no'></iframe></div></div>";
                         }else{
                             var c_group = '<?php echo $channel_id; ?>';
                             var c_channel = '<?php echo $_SESSION['current_channel']; ?>'; 
                             if(data.group == c_group){
                                 if(data.channel == c_channel){
-                                    var html_data = "<div class='status_post'><div class='post_profile_pic'><img src='$profile_pic' width='30'><div class='online-indicator'><span class='blink'></span></div></div><div class='posted_by' style='color:#ACACAC;'><a href='"+data.username+"' onclick='on()'> "+data.fullname+" </a>&nbsp;&nbsp;&nbsp;&nbsp;"+data.dt+"</div><div class='post_body'>"+data.msg+"<br></div><div class='newsfeedPostOptions'><iframe src='like.php?post_id=$id' scrolling='no'></iframe></div></div>";
+                                    var html_data = "<div class='status_post'><div class='post_profile_pic'><img src='"+data.profile_pic+"' width='30'><div class='online-indicator'><span class='blink'></span></div></div><div class='posted_by' style='color:#ACACAC;'><a href='"+data.username+"' onclick='on()'> "+data.fullname+" </a>&nbsp;&nbsp;&nbsp;&nbsp;"+data.dt+"</div><div class='post_body'>"+data.msg+"<br></div><div class='newsfeedPostOptions'><iframe src='like.php?post_id=$id' scrolling='no'></iframe></div></div>";
                                 }
                             }
                         }
-
                         //$(".posts_area").append(html_data);
                         $(".posts_area").prepend(html_data);
                         

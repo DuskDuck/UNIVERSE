@@ -45,7 +45,7 @@ a {
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
     width: 35%;
-    background-color: #1D2128FF;
+    background-color: #2c2f33;
     border-radius: 5px;
     padding: 5px;
     color:  #DEE1E6FF; 
@@ -72,7 +72,7 @@ a {
     -webkit-text-fill-color: transparent;
 }
 input[type="submit"]{
-    font-family: 'Quicksand-Bold', sans-serif;
+    font-family: 'Quicksand-RegularItalic', sans-serif;
     background-color: rgb(20, 20, 20);
     color:  #DEE1E6FF; 
     border-radius: 3px;
@@ -85,10 +85,13 @@ input[type="submit"]:hover{
     background-color: rgb(100, 100, 100);
 }
 input[type="text"],input[type="email"],input[type="password"]{
-    border: 1px solid rgb(157, 157, 157);   
+    font-family: 'Quicksand-Bold', sans-serif;
+    color: #DEE1E6FF;
+    border: transparent;  
     width: 70%;
     height: 35px;   
     padding-left: 5px;
+    background-color: #23272a
 }
 input[type="text"]:focus,input[type="email"]:focus,input[type="password"]:focus{
     outline-color: rgb(10, 165, 41);
