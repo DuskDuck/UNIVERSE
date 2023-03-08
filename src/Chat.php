@@ -19,6 +19,7 @@ $videoroomarray;
 class Chat implements MessageComponentInterface {
     
     protected $clients;
+    protected $userstate = array();
 
     public function __construct() {
         $this->clients = new \SplObjectStorage;
@@ -35,7 +36,7 @@ class Chat implements MessageComponentInterface {
 
         //     $tmpcon->close();//close right away for potential threat
         // }
-        
+        $this->userstate[$conn->resourceId] = true;
 
         echo "New connection! ({$conn->resourceId})\n";
     }
@@ -57,6 +58,8 @@ class Chat implements MessageComponentInterface {
                 $user_pic_query = mysqli_query($tmpcon, "SELECT profile_pic FROM users WHERE username='$user_name'");
                 $user_row = mysqli_fetch_array($user_pic_query);
                 $data['profile_pic'] = $user_row['profile_pic'];
+
+                
               
                 $user_obj = new User($tmpcon, $user_name);
                 $post_obj = new Post($tmpcon,$user_name);
@@ -146,6 +149,7 @@ class Chat implements MessageComponentInterface {
 
         //     $tmpcon->close();//close right away for potential threat
         // }
+        unset($this->userstate[$conn->resourceId]);
 
         echo "Connection {$conn->resourceId} has disconnected\n";
     }

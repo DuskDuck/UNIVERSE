@@ -6,6 +6,7 @@ if(isset($_SESSION['username'])) {
     //$_SESSION['current_group'] = 0;
     $userLoggedIn = $_SESSION['username'];
     $user_details_query = mysqli_query($con, "SELECT * FROM users WHERE username = '$userLoggedIn'");
+    $update_account = mysqli_query($con, "UPDATE users SET online = 1 WHERE username='$userLoggedIn'");
     $user = mysqli_fetch_array($user_details_query);
     // $_SESSION['current_channel'] = 'General Chat';
 }

@@ -462,12 +462,27 @@ if(isset($_POST['post'])){
                     conn.onopen = function(e){
                         console.log("Connection established!");
                         inchatroom = 0;
-                        // var bridge = new WebSocket("ws://localhost:8080/chat.php?name=<?php echo $userLoggedIn; ?>")
+                        var c_user = '<?php echo $userLoggedIn; ?>';
+                        $.ajax({
+                            type: "POST",
+                            url: "includes/handlers/user_state_control.php",
+                            data: { name: c_user, online: 1 }
+                        }).done(function( msg ) {
+                            console.log( "Data updated: " + msg );
+                        });
                     };
                     conn.onclose = function(e){
+                        var c_user = '<?php echo $userLoggedIn; ?>';
                         if(inchatroom){
                             disconnentCall();
                         }
+                        $.ajax({
+                            type: "POST",
+                            url: "includes/handlers/user_state_control.php",
+                            data: { name: c_user, online: 0 }
+                        }).done(function( msg ) {
+                            console.log( "Data updated: " + msg );
+                        });
                     };
                     conn.onmessage = function(e){
                         console.log(e.data);
