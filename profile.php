@@ -25,8 +25,7 @@ if(isset($_GET['profile_username'])){
                 </div>
                 
                     <div class="profile_info">
-                        <p><?php echo "Posts: " . $user_array['num_posts']; ?></p>
-                        <p><?php echo "Likes: " . $user_array['num_likes']; ?></p>
+                        <p><?php echo $user_array['first_name'] . " " . $user_array['last_name']; ?></p>
                         <p><?php echo "Friends: " . $num_friends; ?></p>
                     </div>
 

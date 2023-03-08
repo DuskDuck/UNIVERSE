@@ -29,7 +29,7 @@ class Post {
             //echo "<script>$from_channel</script>";
             $user_to = "none";
 
-            $query = mysqli_query($this->con,"INSERT INTO posts VALUES('','$body','$added_by','$user_to','$date_added','no','no','0','$from_channel','$c_group')");
+            $query = mysqli_query($this->con,"INSERT INTO posts VALUES('','$body','$added_by','$user_to','$date_added','no','no','0','$from_channel','$c_group',0)");
             $returned_id = mysqli_insert_id($this->con);//unused for now
 
             //insert notification
@@ -140,7 +140,6 @@ class Post {
                     if($c_group == $row['group_id']){
                     //Check if post is from friend
                     //if($user_logged_obj->isFriend($added_by)){
-                       
                         if($num_iterations++ < $start)
                             continue;
 
@@ -152,11 +151,12 @@ class Post {
                         }
 
                         //get row info
-                        $user_details_query = mysqli_query($this->con, "SELECT first_name, last_name, profile_pic FROM users WHERE username='$added_by'");
+                        $user_details_query = mysqli_query($this->con, "SELECT first_name, last_name,username, profile_pic FROM users WHERE username='$added_by'");
                         $user_row = mysqli_fetch_array($user_details_query);
                         $first_name = $user_row['first_name'];
                         $last_name = $user_row['last_name'];
                         $profile_pic = $user_row['profile_pic'];
+                        $username = $user_row['username'];
 
 
                         //Time handler
@@ -220,43 +220,62 @@ class Post {
                                 $time_message = $interval->s . " seconds ago";
                             }
                         }
-
-                        if($added_by_obj->isOnline()){
-                            $str .= "<div class='status_post'>
-                                    <div class='post_profile_pic'>
-                                        <img src='$profile_pic' width='30'>
-                                        <div class='online-indicator'>
-                                            <span class='blink'></span>
+                        $c_group_query = mysqli_query($this->con, "SELECT * FROM channel WHERE id = '$c_group'");
+                        $c_group_row = mysqli_fetch_array($c_group_query);
+                        if (strpos($c_group_row['ban_list'], $username) !== false) {
+                            $str .= "<div class='status_post' style = 'opacity:0.5; scale:0.85;'>
+                                        <div class='post_profile_pic'>
+                                            <img src='$profile_pic' width='30'>
+                                        </div>
+                                        <div class='posted_by' style='color:#ACACAC;'>
+                                            <a href='$added_by'  onclick='on()'> [Unknown] </a> $user_to &nbsp;&nbsp;&nbsp;&nbsp;
+                                        </div>
+                                        <div class='post_body banned'>
+                                            This user have been banned<br>
                                         </div>
                                     </div>
+                                    ";
+                        } else {
+                            if($added_by_obj->isOnline()){
+                                $str .= "<div class='status_post'>
+                                        <div class='post_profile_pic'>
+                                            <img src='$profile_pic' width='30'>
+                                            <div class='online-indicator'>
+                                                <span class='blink'></span>
+                                            </div>
+                                        </div>
 
-                                    <div class='posted_by' style='color:#ACACAC;'>
-                                        <a href='$added_by' onclick='on()'> $first_name $last_name </a> $user_to &nbsp;&nbsp;&nbsp;&nbsp;$date_time
+                                        <div class='posted_by' style='color:#ACACAC;'>
+                                            <a href='$added_by' onclick='on()'> $first_name $last_name </a> $user_to &nbsp;&nbsp;&nbsp;&nbsp;$date_time
+                                            <div class='newsfeedPostOptions'>
+                                                <iframe src='like.php?post_id=$id' scrolling='no'></iframe>
+                                                <iframe src='pin.php?post_id=$id' scrolling='no'></iframe>
+                                            </div>
+                                        </div>
+                                        <div class='post_body'>
+                                            $body<br>
+                                        </div>
+                                        
                                     </div>
-                                    <div class='post_body'>
-                                        $body<br>
+                                    ";
+                            }else{
+                                $str .= "<div class='status_post'>
+                                        <div class='post_profile_pic'>
+                                            <img src='$profile_pic' width='30'>
+                                        </div>
+                                        <div class='posted_by' style='color:#ACACAC;'>
+                                            <a href='$added_by'  onclick='on()'> $first_name $last_name </a> $user_to &nbsp;&nbsp;&nbsp;&nbsp;$date_time
+                                        </div>
+                                        <div class='post_body'>
+                                            $body<br>
+                                        </div>
+                                        <div class='newsfeedPostOptions'>
+                                            <iframe src='like.php?post_id=$id' scrolling='no'>''</iframe>
+                                            <iframe src='pin.php?post_id=$id' scrolling='no'>''</iframe>
+                                        </div>
                                     </div>
-                                    <div class='newsfeedPostOptions'>
-                                        <iframe src='like.php?post_id=$id' scrolling='no'></iframe>
-                                    </div>
-                                </div>
-                                ";
-                        }else{
-                            $str .= "<div class='status_post'>
-                                    <div class='post_profile_pic'>
-                                        <img src='$profile_pic' width='30'>
-                                    </div>
-                                    <div class='posted_by' style='color:#ACACAC;'>
-                                        <a href='$added_by'  onclick='on()'> $first_name $last_name </a> $user_to &nbsp;&nbsp;&nbsp;&nbsp;$date_time
-                                    </div>
-                                    <div class='post_body'>
-                                        $body<br>
-                                    </div>
-                                    <div class='newsfeedPostOptions'>
-                                        <iframe src='like.php?post_id=$id' scrolling='no'>''</iframe>
-                                    </div>
-                                </div>
-                                ";
+                                    ";
+                            }
                         }
                         //append everything into this string var as html code to echo out( each of this part is one message)
                         //}

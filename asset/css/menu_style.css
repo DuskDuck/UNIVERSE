@@ -1,0 +1,286 @@
+@font-face {
+    font-family: 'Quicksand-Bold';
+    src: url(../font/quicksand/Quicksand-Bold.otf);
+}
+@font-face {
+    font-family: 'Quicksand-RegularItalic';
+    src: url(../font/quicksand/Quicksand-Regular.otf);
+}
+@font-face {
+    font-family: '20DB';
+    src: url(../font/20-db/20db.otf);
+}
+#overlay_option {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    cursor: pointer;
+}
+#overlay_option .esc_button{
+    color: rgba(255, 255, 255, 0.819);
+    font-size: 40px;
+    position: absolute;
+    right: 20%;
+    top:5%;
+}
+.side_menu {
+    font-family: 'Quicksand-Bold';
+    width: 30%;
+    float: left;
+    height: 100%; 
+    background-color: #303336FF;
+}
+.side_menu ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 15%;
+} 
+.side_menu li {
+    display: block;
+} 
+.side_menu button {
+    padding: 8px;
+    background-color: #303336FF;
+    color: rgba(255, 255, 255, 0.819);
+    border: none;
+    cursor: pointer;
+    width: 200px;
+    float: right;
+    margin-right: 10px;
+    text-align: left;
+    font-size: 15px;
+    border-radius: 4px;
+} 
+.side_menu button:hover {
+    background-color: rgb(70, 74, 78);
+}
+.side_menu .channel_name_2 {
+    padding: 8px;
+    background-color: #303336FF;
+    color: rgba(255, 255, 255, 0.819);
+    border: none;
+    cursor:default;
+    width: 200px;
+    float: right;
+    margin-right: 10px;
+    text-align: left;
+    font-size: 15px;
+    border-radius: 4px;
+}
+.side_menu .channel_name_2:hover {
+    background-color: #303336FF;
+}
+.content {
+    float: right;
+    width: 70%;
+    height: 100%;
+    background-color: #474A4FFF;
+    padding-left: 3%;
+    padding-top: 5%;
+    padding-right: 25%;
+}
+.page {
+    display: none;
+}
+.active {
+    display: block;
+}
+.content h1 {
+    color: rgba(255, 255, 255, 0.916);
+    font-size: 18px;
+    margin-bottom: 3%;
+}
+.content h2 {
+    color: rgba(255, 255, 255, 0.916);
+    font-size: 14px;
+    margin-bottom: 3%;
+}
+.content h2 a{
+    float: right;
+}
+.content .container img {
+    min-width: 120px;
+    min-height: 120px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.75);
+}
+.content .upfile {
+    font-size: 30px;
+    position: fixed;
+    left: 40%;
+    color: #7289DA;
+}
+.content form{
+
+} 
+.content .form_content{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+.content .container {
+    display: flex;
+    flex-direction: row;
+    max-width: 55%;
+    margin: 0;
+      
+}
+.content .container p {
+    margin-left: 20px;
+    font-family: 'Quicksand-RegularItalic';
+    color: rgba(255, 255, 255, 0.819);
+    font-size: 14px;
+}
+.content .change_name {
+    font-family: 'Quicksand-Bold';
+    color: rgba(255, 255, 255, 0.819);
+    margin: 0;
+    position: absolute;
+    right: 25%;
+}
+.content #server-name{
+    background-color: #303336FF;
+    color: rgba(255, 255, 255, 0.819);
+    padding-left: 10px;
+    width: 95%;
+}
+.content form .button {
+    border-radius: 8px;
+    width: 100px;
+    height: 40px;
+    border: 0;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.819);
+    background-color: #7289DA;
+    float: right;
+}
+#channels {
+    font-family: 'Quicksand-Bold',sans-serif;
+    width: 100%; 
+    background-color: #474A4FFF;
+    border-radius: 0px;  
+    overflow: hidden; 
+    font-size: 12px;
+    color: #DEE1E6FF;
+}
+#channels i {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#channels p {
+    font-family: 'Quicksand-RegularItalic',sans-serif;
+    color: rgb(186, 189, 194);
+    padding: 8px 16px;
+    width: 95%;
+    margin-left: 5px;
+    margin-bottom: 2px;
+    font-size: 16px;
+    text-decoration: none;
+    text-align: left;
+    border: 0px;
+    display: block;
+    border-radius: 6px;
+    background-color: #474A4FFF;
+}
+#channels p button{
+    float: right;
+    width: 40px;
+    color: #ed4245;
+    background-color: transparent;
+    border: 0;
+
+}
+#channels p button:hover{
+    color: #9d2b2d;
+}
+#channels input {
+    font-family: 'Quicksand-RegularItalic',sans-serif;
+    color: rgb(186, 189, 194);
+    padding: 8px 16px;
+    width: 95%;
+    margin-left: 5px;
+    margin-bottom: 2px;
+    font-size: 16px;
+    text-decoration: none;
+    text-align: left;
+    border: 0px;
+    display: block;
+    border-radius: 6px;
+    background-color: #474A4FFF;
+}
+#channels input:active{
+    background-color: rgb(118, 124, 129);
+}
+#channels input:not(:last-child) {
+    border-bottom: none; /* Prevent double borders */
+}
+#channels input:hover:not(:active){
+    background-color: rgb(90, 95, 99);
+}
+.danger i{
+    float: right;
+    color: #ed4245;
+}
+
+.danger_button{
+    border-radius: 8px;
+    width: 100px;
+    height: 40px;
+    border: 0;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.819);
+    background-color: #ed4245;
+    float: right;
+}
+.warning_area{
+    color: rgba(255, 255, 255, 0.819);
+    background-color: #ffa41ceb;
+    width: 100%;
+    height: 6%;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'Quicksand-RegularItalic',sans-serif;
+    padding-left: 10px;
+    padding-top: 10px;
+    margin-bottom: 30px;
+}
+#members .user_list_item {
+    height: 50px;
+    color: rgba(255, 255, 255, 0.819);
+}
+
+#members .user_list_item img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-block;
+}
+#members .user_list_item p{
+    display: inline-block;
+}
+#members .user_option{
+    display: none;
+    float: right;
+    position: relative;
+    top:50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+#members .user_list_item:hover .user_option{
+    display: inline-block;
+}
+.userButton{
+    background-color: transparent;
+    border: none;
+}

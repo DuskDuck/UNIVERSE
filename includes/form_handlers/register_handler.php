@@ -105,7 +105,7 @@ if(isset($_POST['register_button'])){
         //Profile picture assignment
         $profile_pic = "asset/images/profile_pic/default/DefaultUser.png";
         
-        $query = mysqli_query($con, "INSERT INTO users VALUES ('','$fname','$lname','$username','$em','$password','$date','$profile_pic','0','0','no',',','1','1')");
+        $query = mysqli_query($con, "INSERT INTO users VALUES ('','$fname','$lname','$username','$em','$password','$date','$profile_pic','0','0','no',',','','1')");
 
         // $mail = new PHPMailer(true);
         // $mail->isSMTP();

@@ -8,7 +8,7 @@ if(isset($_POST['create_button'])){
         $servername = $_POST['server-name'];
         srand(time());
         $gencode = rand(100000,999999);
-        $query = mysqli_query($con, "INSERT INTO channel VALUES ('','$servername','$target_file','Voice Room','General Chat','$gencode','$userLoggedIn')");
+        $query = mysqli_query($con, "INSERT INTO channel VALUES ('','$servername','$target_file','Voice Room','General Chat','$gencode','$userLoggedIn','')");
         
         $check_database_query = mysqli_query($con, "SELECT * FROM channel WHERE name = '$servername'");
         $check_login_query = mysqli_num_rows($check_database_query);

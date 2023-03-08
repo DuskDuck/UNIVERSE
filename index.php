@@ -5,13 +5,39 @@ include("includes/classes/Post.php");
 require("includes/form_handlers/add_channel_handler.php");
 require("includes/form_handlers/add_group_handler.php");
 require("includes/form_handlers/join_channel_handler.php");
+require("includes/form_handlers/delete_channel_handler.php");
+require("includes/form_handlers/delete_group_handler.php");
+require("includes/form_handlers/update_group_handler.php");
+require("includes/form_handlers/user_manage_handler.php");
+require("includes/form_handlers/leave_group_handler.php");
 
 if(isset($_POST['post'])){
     $post= new Post($con, $userLoggedIn);
     $post->submitPost($_POST['post_text'],'none');
     header("Location: index.php");
 }
-?>
+?>  
+    <?php
+        if($user['group_id'] != ""){
+            echo "<div id='overlay_planet' style=\"display:none;\">";
+        }else{
+            echo "<div id='overlay_planet' style=\"display:block;\">";
+        }
+    ?>
+        <div class="space_anim"></div>
+        <div class="wrapper_planet">
+            <?php   
+                require("planet.php");
+            ?>
+        </div>
+        <div class='planet_form'>
+            <form action = "index.php" method="POST" enctype="multipart/form-data">
+                <input type="text" id="server-name" name="invite_code" placeholder="Enter your invite code" required>
+                <br><br>
+                <input class="button" type="submit" name="join_button" value="JOIN">
+            </form>
+        </div>
+    </div>
     <div id="overlay_join_channel">
         <div class="wrapper_add_channel">
             <h1 style="text-align: center;">Join a Planet</h1>
@@ -41,7 +67,7 @@ if(isset($_POST['post'])){
                     <img id="blah" src="https://placehold.it/100" alt="your image"/>
                 </div>
 
-                <input type="file" id="server-image" name="img" accept="image/*" onchange="readURL(this);" hidden>
+                <input type="file" id="server-image" name="img" accept="image/*" onchange="readURL_1(this);" hidden>
                 <br><br>
                 <label class = "server_name_text" for="server-name">PLANET NAME</label>
                 <input type="text" id="server-name" name="server-name" required>
@@ -57,13 +83,13 @@ if(isset($_POST['post'])){
         </div>
     </div>
     <script>
-        function readURL(input) {
+        function readURL_1(input) {
+            console.log("huh");
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
 
                 reader.onload = function (e) {
-                    $('#blah')
-                        .attr('src', e.target.result);
+                    $('#blah').attr('src', e.target.result);
                 };
 
                 reader.readAsDataURL(input.files[0]);
@@ -99,6 +125,7 @@ if(isset($_POST['post'])){
                 <label class = "server_name_text" for="server-name">SERVER NAME</label>
                 <input type="text" id="channel-name" name="channel_name" required>
                 <br><br>
+
                 <input class="button" type="submit" name="create_channel_button" value="Create Channel">
             </form>
             
@@ -134,14 +161,23 @@ if(isset($_POST['post'])){
             <!-- Get Channel Name -->
             <?php
             $current_user_group_array = explode(",",$user['group_id']);
+            array_shift($current_user_group_array);
             $first_user_group = reset($current_user_group_array);
-            $channel_id = $_SESSION['current_group'] ?? $first_user_group;
-            $_SESSION['current_group'] = $channel_id;
+            if($_SESSION['current_group'] > 0){
+                $channel_id = $_SESSION['current_group'];
+            }else{
+                $channel_id = $first_user_group;
+            }
             $channel_query = mysqli_query($con,"SELECT * FROM channel WHERE id='$channel_id'");
             $channel = mysqli_fetch_array($channel_query); 
             echo $channel["name"];
+            
+            // if($user['username'] == $channel['admin']){
+            //     echo "<a href='#' onclick='toggleDiv(\"overlay_option\")'><i class='fa-solid fa-gear'></i></a>";
+            // }      
             ?>
-            <i class="fa-solid fa-chevron-down"></i></p></div>
+            <a href='#' onclick='toggleDiv("overlay_option")'><i class='fa-solid fa-gear'></i></a>
+            </div>
         <div class="channel_ads">
             <img src="asset/images/ads/blackhole.jpg">
             <p>Expand your universe now with UNI Expansion Version</p>
@@ -191,7 +227,7 @@ if(isset($_POST['post'])){
                     $channelname = $channel['voice_channel'];
                     $channel_array = explode(",",$channelname);
                     foreach($channel_array as $value){
-                    echo "<button><i class='fa-solid fa-hashtag'></i>$value</button>";
+                    echo "<button onclick=\"toggleDiv('chatroom')\"># $value</button>";
                     }
                 ?>
             </div>
@@ -209,6 +245,11 @@ if(isset($_POST['post'])){
         </div>
     </div>
     <div class="main_area">
+        <div id="chatroom">
+            <?php
+                require("chatroom.php");
+            ?>
+        </div>
         <div class="nav">
             <div class="chat_welcome">
                 <i class="fa-solid fa-hashtag"></i> 
@@ -305,8 +346,20 @@ if(isset($_POST['post'])){
             </div>
         </div>
     </div>
+    <?php
+    require("includes/channel_option.php");
+    ?>
     <script> 
         const container = document.querySelector('.posts_area');
+        const videoContainer = document.getElementById('video-container');
+                    
+        var conn = new WebSocket('ws://localhost:8080');
+        const pc = new RTCPeerConnection();
+
+        let inchatroom;
+        let userId;
+
+        let stm;
         function on() {
         document.getElementById("overlay").style.display = "block";
         }
@@ -387,25 +440,34 @@ if(isset($_POST['post'])){
                         var rect = el.getBoundingClientRect();
                          console.log(rect.top);
                          console.log("bottom" + rect.bottom);
-                        // console.log($(".posts_area").height);
+                         console.log($(".posts_area").height);
                 
                         return (
-                             rect.top >= 44 &&
+                             rect.top >= 45 &&
                         //     rect.left >= 325 &&
-                             rect.bottom >= 135 //* or $(window).height()
+                             rect.bottom >= 115 //* or $(window).height()
                         //     rect.right <= ($(".posts_area").innerWidth || $(".posts_area").width) //* or $(window).width()
                         );
                     }
                 });
 
+
+
+                //REAL TIME RATCHET
+
                 $(document).ready(function(){
-                    var conn = new WebSocket('ws://localhost:8080');
+
+                    //Video Container
+
                     conn.onopen = function(e){
                         console.log("Connection established!");
+                        inchatroom = 0;
                         // var bridge = new WebSocket("ws://localhost:8080/chat.php?name=<?php echo $userLoggedIn; ?>")
                     };
                     conn.onclose = function(e){
-
+                        if(inchatroom){
+                            disconnentCall();
+                        }
                     };
                     conn.onmessage = function(e){
                         console.log(e.data);
@@ -425,6 +487,38 @@ if(isset($_POST['post'])){
                         }
                         //$(".posts_area").append(html_data);
                         $(".posts_area").prepend(html_data);
+
+
+                        if (data.type === 'offer') {
+                            var c_user = '<?php echo $userLoggedIn; ?>';
+                            const parent = document.getElementById("video-container");
+                            
+                            while (parent.firstChild) {
+                                parent.removeChild(parent.firstChild);
+                            }
+                            
+                            for(let i = 0; i < data.count; i++){
+                                if(data.user_array[i] == c_user){
+                                    userId = i;
+                                }
+                                CreateVideo(data.user_array,i);
+                            }
+                        }
+                        if (data.type === 'discon') {
+                            var c_user = '<?php echo $userLoggedIn; ?>';
+                            const parent = document.getElementById("video-container");
+                            
+                            while (parent.firstChild) {
+                                parent.removeChild(parent.firstChild);
+                            }
+
+                            for(let i = 0; i < data.count; i++){
+                                if(data.user_array[i] == c_user){
+                                    userId = i;
+                                }
+                                CreateVideo(data.user_array,i);
+                            }
+                        }
                         
                     }
                     $('.message_area').on('submit',function(event){
@@ -433,8 +527,10 @@ if(isset($_POST['post'])){
                         var message = $('#post_text').val();
                         var channel = '<?php echo $_SESSION['current_channel']; ?>';
                         var group = '<?php echo $channel_id; ?>';
+                        var text = 'text';
 
                         var data = {
+                            type : text,
                             username : userLoggedIn,
                             msg : message,
                             channel : channel,
@@ -444,6 +540,114 @@ if(isset($_POST['post'])){
                         conn.send(JSON.stringify(data));
                     });
                 });
+                function disconnentCall() {
+                    const parent = document.getElementById("video-container");
+                    while (parent.firstChild) {
+                        parent.removeChild(parent.firstChild);
+                    }
+                    var userLoggedIn = '<?php echo $userLoggedIn; ?>';
+                    
+                    const data = {
+                        type: 'discon',
+                        username: userLoggedIn,
+                        position: userId
+                    };
+                    conn.send(JSON.stringify(data));
+                    toggleDiv('chatroom');
+                    location.reload();
+                }
+                function startVideoCall() {
+                    inchatroom = 1;
+                    navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+                    .then(function(stream) {
+                        var userLoggedIn = '<?php echo $userLoggedIn; ?>';
+                        const video = document.createElement('video');
+                        video.muted = true;
+                        video.autoplay = true;
+                        video.srcObject = stream;
+                        stm = stream;
+
+                        videoContainer.appendChild(video);
+
+                        pc.addStream(stream);
+
+                        pc.createOffer().then(function(offer) {
+                            pc.setLocalDescription(offer);
+
+                            const message = {
+                            type: 'offer',
+                            username: userLoggedIn
+                            //offer: offer
+                            };
+
+                            conn.send(JSON.stringify(message));
+                        })
+                    })
+                    .catch(function(error) {
+                        console.error('Error getting user media:', error);
+                    });
+                }
+                function CreateVideo(user_array,arr_pos) {
+                    var userLoggedIn = user_array[arr_pos];
+                    navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+                    .then(function(stream) {
+            
+                        const video = document.createElement('video');
+                        video.muted = true;
+                        video.autoplay = true;
+                        video.srcObject = stream;
+
+                        const video_item = document.createElement('div');
+                        video_item.className = 'video_item';
+                        
+                        video_item.appendChild(video);
+
+                        const overlay = document.createElement('div');
+                        overlay.className = 'overlay';
+                        overlay.innerHTML = userLoggedIn;
+
+                        video_item.appendChild(overlay);
+
+                        videoContainer.appendChild(video_item);
+                    })
+                    .catch(function(error) {
+                        console.error('Error getting user media:', error);
+                    });
+                }
+                // peerConnection.addEventListener('icecandidate', event => {
+                //     if (event.candidate) {
+                //         const candidate = {
+                //         type: 'candidate',
+                //         candidate: event.candidate.toJSON()
+                //         };
+
+                //         conn.send(JSON.stringify(candidate));
+                //     }
+                // });
+                // peerConnection.addEventListener('negotiationneeded', async () => {
+                //     try {
+                //         const offer = await peerConnection.createOffer();
+                //         await peerConnection.setLocalDescription(offer);
+
+                //         const answer = {
+                //         type: 'answer',
+                //         answer: peerConnection.localDescription.toJSON()
+                //         };
+
+                //         conn.send(JSON.stringify(answer));
+                //     } catch (error) {
+                //         console.error(error);
+                //     }
+                // });
+                // conn.addEventListener('message', async event => {
+                // const message = JSON.parse(event.data);
+
+                // if (message.type === 'answer') {
+                //     const answerDescription = new RTCSessionDescription(message.answer);
+                //     await peerConnection.setRemoteDescription(answerDescription);
+                // }
+                // });
+               
     </script>
 </body>
 </html>
